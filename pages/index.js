@@ -1,26 +1,25 @@
 import Head from 'next/head';
-import dynamic from 'next/dynamic';
+import HomeContainer from '../containers/Home';
+import { Box } from '@mui/material';
 
 export default function Home() {
-  const DynamicCube = dynamic(() => import('../animations/Cube'), {
-    ssr: false,
-  });
-
   return (
-    <div>
+    <Box>
       <Head>
         <title>3D Cube</title>
         <meta
           name='description'
           content='A simple 3D cube created by Frans Jesky'
         />
-        <link rel='icon' href='/favicon.ico' />
+        <link rel='preconnect' href='https://fonts.googleapis.com' />
         <link
-          rel='stylesheet'
-          href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'
+          rel='preconnect'
+          href='https://fonts.gstatic.com'
+          crossOrigin='true'
         />
+        <link rel='icon' href='/favicon.ico' />
       </Head>
-      <DynamicCube />
-    </div>
+      <HomeContainer />
+    </Box>
   );
 }

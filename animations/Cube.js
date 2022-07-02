@@ -36,7 +36,7 @@ function Cube() {
     : null;
   controls ? (controls.enableDamping = true) : null;
   controls ? (controls.maxDistance = 10) : null;
-  controls ? (controls.minDistance = 1) : null;
+  controls ? (controls.minDistance = 2) : null;
 
   // renderer
   useEffect(() => {
