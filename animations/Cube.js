@@ -3,9 +3,9 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Box } from '@mui/material';
 import * as dat from 'dat.gui';
+import gsap from 'gsap';
 
 const gui = new dat.GUI();
-gui.width = window.innerWidth / 4;
 
 function Cube() {
   // variables init
@@ -52,10 +52,26 @@ function Cube() {
         alpha: true,
       })
     );
-  }, []);
+  }, [canvas]);
 
   renderer?.setSize(sizes.width, sizes.height);
   renderer?.render(scene, camera);
+
+  // object params
+  const objectParams = {
+    spinY: () => {
+      gsap.to(cube.rotation, {
+        duration: 1,
+        y: cube.rotation.y + Math.PI * 2,
+      });
+    },
+    spinX: () => {
+      gsap.to(cube.rotation, {
+        duration: 1,
+        x: cube.rotation.x + Math.PI * 2,
+      });
+    },
+  };
 
   // debug UI
   useEffect(() => {
@@ -78,6 +94,10 @@ function Cube() {
         .max(1)
         .step(0.1)
         .name('Position Z Axis');
+      gui.add(cube, 'visible').name('Visibility');
+      gui.add(material, 'wireframe').name('Wireframe');
+      gui.add(objectParams, 'spinY').name('Horizontal Spin');
+      gui.add(objectParams, 'spinX').name('Vertical Spin');
     }
   }, [renderer]);
 
