@@ -2,8 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Box } from '@mui/material';
+import * as dat from 'dat.gui';
+
+const gui = new dat.GUI();
+gui.width = window.innerWidth / 4;
 
 function Cube() {
+  // variables init
   const [renderer, setRenderer] = useState(null);
   const canvas = useRef();
   const sizes = {
@@ -51,6 +56,30 @@ function Cube() {
 
   renderer?.setSize(sizes.width, sizes.height);
   renderer?.render(scene, camera);
+
+  // debug UI
+  useEffect(() => {
+    if (renderer) {
+      gui
+        .add(cube.position, 'x')
+        .min(-4)
+        .max(4)
+        .step(0.1)
+        .name('Position X Axis');
+      gui
+        .add(cube.position, 'y')
+        .min(-2)
+        .max(2)
+        .step(0.1)
+        .name('Position Y Axis');
+      gui
+        .add(cube.position, 'z')
+        .min(-1)
+        .max(1)
+        .step(0.1)
+        .name('Position Z Axis');
+    }
+  }, [renderer]);
 
   // resize event
   window.addEventListener('resize', () => {
