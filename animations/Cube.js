@@ -2,10 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Box } from '@mui/material';
-import * as dat from 'dat.gui';
+import { folder, useControls } from 'leva';
 import gsap from 'gsap';
-
-const gui = new dat.GUI();
 
 function Cube() {
   // variables init
@@ -16,13 +14,35 @@ function Cube() {
     width: window.innerWidth,
   };
 
+  // debug UI
+  const { positionX, positionY, positionZ, wireframe, visibility } =
+    useControls({
+      wireframe: { value: false, label: 'Wireframe' },
+      visibility: { value: true, label: 'Visibility' },
+      positions: folder({
+        positionX: {
+          value: 0,
+          min: -4,
+          max: 4,
+          step: 0.01,
+          label: 'Horizontal',
+        },
+        positionY: { value: 0, min: -2, max: 2, step: 0.01, label: 'Vertical' },
+        positionZ: { value: 0, min: -1, max: 1, step: 0.01, label: 'Depth' },
+      }),
+    });
+
   // scene
   const scene = new THREE.Scene();
 
   // object
   const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshNormalMaterial();
+  const material = new THREE.MeshNormalMaterial({ wireframe: wireframe });
   const cube = new THREE.Mesh(geometry, material);
+  cube.position.x = positionX;
+  cube.position.y = positionY;
+  cube.position.z = positionZ;
+  cube.visible = visibility;
   scene.add(cube);
 
   // camera
@@ -56,50 +76,6 @@ function Cube() {
 
   renderer?.setSize(sizes.width, sizes.height);
   renderer?.render(scene, camera);
-
-  // object params
-  const objectParams = {
-    spinY: () => {
-      gsap.to(cube.rotation, {
-        duration: 1,
-        y: cube.rotation.y + Math.PI * 2,
-      });
-    },
-    spinX: () => {
-      gsap.to(cube.rotation, {
-        duration: 1,
-        x: cube.rotation.x + Math.PI * 2,
-      });
-    },
-  };
-
-  // debug UI
-  useEffect(() => {
-    if (renderer) {
-      gui
-        .add(cube.position, 'x')
-        .min(-4)
-        .max(4)
-        .step(0.1)
-        .name('Position X Axis');
-      gui
-        .add(cube.position, 'y')
-        .min(-2)
-        .max(2)
-        .step(0.1)
-        .name('Position Y Axis');
-      gui
-        .add(cube.position, 'z')
-        .min(-1)
-        .max(1)
-        .step(0.1)
-        .name('Position Z Axis');
-      gui.add(cube, 'visible').name('Visibility');
-      gui.add(material, 'wireframe').name('Wireframe');
-      gui.add(objectParams, 'spinY').name('Horizontal Spin');
-      gui.add(objectParams, 'spinX').name('Vertical Spin');
-    }
-  }, [renderer]);
 
   // resize event
   window.addEventListener('resize', () => {
