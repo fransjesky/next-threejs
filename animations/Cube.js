@@ -15,22 +15,38 @@ function Cube() {
   };
 
   // debug UI
-  const { positionX, positionY, positionZ, wireframe, visibility } =
-    useControls({
-      wireframe: { value: false, label: 'Wireframe' },
-      visibility: { value: true, label: 'Visibility' },
-      positions: folder({
-        positionX: {
-          value: 0,
-          min: -4,
-          max: 4,
-          step: 0.01,
-          label: 'Horizontal',
-        },
-        positionY: { value: 0, min: -2, max: 2, step: 0.01, label: 'Vertical' },
-        positionZ: { value: 0, min: -1, max: 1, step: 0.01, label: 'Depth' },
-      }),
-    });
+  const animations = ['Spin Left', 'Spin Right', 'Spin Top', 'Spin Down'];
+  const {
+    wireframe,
+    visibility,
+    background,
+    positionX,
+    positionY,
+    positionZ,
+    animate,
+    mode,
+    speed,
+  } = useControls({
+    wireframe: { value: false },
+    visibility: { value: true },
+    background: { value: '#ffffff' },
+    positions: folder({
+      positionX: {
+        value: 0,
+        min: -4,
+        max: 4,
+        step: 0.01,
+        label: 'horizontal',
+      },
+      positionY: { value: 0, min: -2, max: 2, step: 0.01, label: 'vertical' },
+      positionZ: { value: 0, min: -1, max: 1, step: 0.01, label: 'depth' },
+    }),
+    animations: folder({
+      animate: { value: true },
+      mode: { options: animations },
+      speed: { value: 0.01, min: 0.01, max: 0.1, step: 0.01 },
+    }),
+  });
 
   // scene
   const scene = new THREE.Scene();
@@ -90,7 +106,17 @@ function Cube() {
 
   const tick = () => {
     // rotate cube animation
-    cube.rotation.y += 0.01;
+    animate
+      ? mode == animations[0]
+        ? (cube.rotation.y -= speed)
+        : mode == animations[1]
+        ? (cube.rotation.y += speed)
+        : mode == animations[2]
+        ? (cube.rotation.x -= speed)
+        : mode == animations[3]
+        ? (cube.rotation.x += speed)
+        : null
+      : null;
 
     // update controls
     controls ? controls.update() : null;
@@ -103,7 +129,9 @@ function Cube() {
 
   tick();
 
-  return <Box component='canvas' ref={canvas} />;
+  return (
+    <Box component='canvas' ref={canvas} sx={{ backgroundColor: background }} />
+  );
 }
 
 export default Cube;
